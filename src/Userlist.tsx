@@ -8,15 +8,17 @@ type User = {
   address: {
     city: string;
   };
-  isOldestInCity?: boolean;
-  isMatch?: boolean;
 };
 
 type Props = {
+  users: User[]; 
   filteredUsers: User[]; 
 };
 
-const UserList: React.FC<Props> = ({ filteredUsers }) => {
+const UserList: React.FC<Props> = ({ users, filteredUsers }) => {
+  const isFiltered = (user: User) =>
+    filteredUsers.some((u) => u.id === user.id);
+
   return (
     <div
       style={{
@@ -40,31 +42,30 @@ const UserList: React.FC<Props> = ({ filteredUsers }) => {
         <div style={{ flex: 1, color: 'black' }}>Birthday</div>
       </div>
 
-      {filteredUsers.map((user) => {
-        const isMatch = user.isMatch;
-        const isOldest = user.isOldestInCity;
-
-        const rowStyle: React.CSSProperties = {
-          display: 'flex',
-          padding: '0.75rem 0',
-          borderBottom: '1px solid #ddd',
-          borderRadius: '4px',
-          marginBottom: '0.25rem',
-          backgroundColor: isOldest ? '#007bff' : isMatch ? '#d0ebff' : 'transparent', 
-          color: isOldest ? 'white' : 'black',  
-        
-        
-        };
+      {users.map((user) => {
+        const highlight = isFiltered(user);
 
         return (
-          <div key={user.id} style={rowStyle}>
-            <div style={{ flex: 1, paddingRight: '1rem' }}>
+          <div
+            key={user.id}
+            style={{
+              display: 'flex',
+              padding: '0.75rem 0', 
+              backgroundColor: highlight ? '#d0ebff' : undefined,
+              borderBottom: '1px solid #ddd',
+              borderRadius: '4px',
+              marginBottom: '0.25rem',
+            }}
+          >
+            <div style={{ flex: 1, paddingRight: '1rem', color: 'black' }}>
               {user.firstName} {user.lastName}
             </div>
-            <div style={{ flex: 1, paddingRight: '1rem' }}>
+            <div style={{ flex: 1, paddingRight: '1rem', color: 'black' }}>
               {user.address.city}
             </div>
-            <div style={{ flex: 1 }}>{user.birthDate}</div>
+            <div style={{ flex: 1, color: 'black' }}>
+              {user.birthDate}
+            </div>
           </div>
         );
       })}
